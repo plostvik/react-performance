@@ -3,13 +3,8 @@
 
 import * as React from 'react'
 
-const LazyWithPreload = importStatement => {
-  const Component = React.lazy(importStatement)
-  Component.preload = importStatement
-  return Component
-}
-
-const Globe = LazyWithPreload(() => import('../globe'))
+const loadGlobe = () => import('../globe')
+const Globe = React.lazy(loadGlobe)
 
 function App() {
   const [showGlobe, setShowGlobe] = React.useState(false)
@@ -28,8 +23,8 @@ function App() {
       <React.Suspense fallback={<div>LOADING...</div>}>
         <label
           style={{marginBottom: '1rem'}}
-          onMouseEnter={Globe.preload}
-          onFocus={Globe.preload}
+          onMouseEnter={loadGlobe}
+          onFocus={loadGlobe}
         >
           <input
             type="checkbox"
