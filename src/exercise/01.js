@@ -3,13 +3,17 @@
 
 import * as React from 'react'
 
-const Globe = React.lazy(() => import('../globe'))
+const LazyWithPreload = importStatement => {
+  const Component = React.lazy(importStatement)
+  Component.preload = importStatement
+  return Component
+}
+
+const Globe = LazyWithPreload(() => import('../globe'))
 
 function App() {
   const [showGlobe, setShowGlobe] = React.useState(false)
 
-  // 💰 try putting it in a few different places and observe how that
-  // impacts the user experience.
   return (
     <div
       style={{
@@ -22,7 +26,11 @@ function App() {
       }}
     >
       <React.Suspense fallback={<div>LOADING...</div>}>
-        <label style={{marginBottom: '1rem'}}>
+        <label
+          style={{marginBottom: '1rem'}}
+          onMouseEnter={Globe.preload}
+          onFocus={Globe.preload}
+        >
           <input
             type="checkbox"
             checked={showGlobe}
@@ -37,8 +45,5 @@ function App() {
     </div>
   )
 }
-// 🦉 Note that if you're not on the isolated page, then you'll notice that this
-// app actually already has a React.Suspense component higher up in the tree
-// where this component is rendered, so you *could* just rely on that one.
 
 export default App
