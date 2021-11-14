@@ -3,8 +3,7 @@
 
 import * as React from 'react'
 
-const loadGlobe = () => import('../globe')
-const Globe = React.lazy(loadGlobe)
+const Globe = React.lazy(() => import(/* webpackPrefetch: true */ '../globe'))
 
 function App() {
   const [showGlobe, setShowGlobe] = React.useState(false)
@@ -21,11 +20,7 @@ function App() {
       }}
     >
       <React.Suspense fallback={<div>LOADING...</div>}>
-        <label
-          style={{marginBottom: '1rem'}}
-          onMouseEnter={loadGlobe}
-          onFocus={loadGlobe}
-        >
+        <label style={{marginBottom: '1rem'}}>
           <input
             type="checkbox"
             checked={showGlobe}
