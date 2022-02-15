@@ -12,6 +12,7 @@ import {
 
 const AppStateContext = React.createContext()
 const AppDispatchContext = React.createContext()
+const DogNameContext = React.createContext()
 
 const initialGrid = Array.from({length: 100}, () =>
   Array.from({length: 100}, () => Math.random() * 100),
@@ -42,6 +43,19 @@ function AppProvider({children}) {
       </AppDispatchContext.Provider>
     </AppStateContext.Provider>
   )
+}
+
+function DogProvider(props) {
+  const dogContextValue = React.useState('')
+  return <DogNameContext.Provider value={dogContextValue} {...props} />
+}
+
+function useDogState() {
+  const context = React.useContext(DogNameContext)
+  if (!context) {
+    throw new Error('useDogState must be used within the DogsNameContext')
+  }
+  return context
 }
 
 function useAppState() {
@@ -99,7 +113,7 @@ function Cell({row, column}) {
 Cell = React.memo(Cell)
 
 function DogNameInput() {
-  const [dogName, setDogName] = React.useState('')
+  const [dogName, setDogName] = useDogState()
 
   function handleChange(event) {
     const newDogName = event.target.value
@@ -128,12 +142,15 @@ function App() {
   return (
     <div className="grid-app">
       <button onClick={forceRerender}>force rerender</button>
-      <AppProvider>
-        <div>
+
+      <div>
+        <DogProvider>
           <DogNameInput />
+        </DogProvider>
+        <AppProvider>
           <Grid />
-        </div>
-      </AppProvider>
+        </AppProvider>
+      </div>
     </div>
   )
 }
